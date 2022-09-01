@@ -39,19 +39,35 @@ public class PlayerController : MonoBehaviour
         myRigid = GetComponentInChildren<Rigidbody>();
         originPos = transform.position;
     }
+    
+    public void Initialized()
+    {
+        transform.position = Vector3.zero;
+        destPos = Vector3.zero;
+        realCube.localPosition = Vector3.zero;
+        canMove = true;
+        s_canPresskey = true;
+        isFalling = false;
+        myRigid.useGravity = false;
+        myRigid.isKinematic = true;
+    }
+    
     void Update()
     {
-        CheckFalling();
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) ||Input.GetKeyDown(KeyCode.D) ||Input.GetKeyDown(KeyCode.W))
+        if (GameManager.instance.isStartGame)
         {
-            if (canMove&&s_canPresskey&&!isFalling)
+            CheckFalling();
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) ||Input.GetKeyDown(KeyCode.D) ||Input.GetKeyDown(KeyCode.W))
             {
-                Calc();
-                if (theTimingManager.CheckTiming())
+                if (canMove&&s_canPresskey&&!isFalling)
                 {
-                    StartAction();
+                    Calc();
+                    if (theTimingManager.CheckTiming())
+                    {
+                        StartAction();
+                    }
                 }
-            }
+            } 
         }
     }
     
@@ -133,6 +149,8 @@ public class PlayerController : MonoBehaviour
     public void ResetFalling()
     {
         theStatus.DecreaseHp(1);
+        
+        AudioManager.instance.PlaySFX("Falling");
         if (!theStatus.IsDead())
         {
             isFalling = false;

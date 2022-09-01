@@ -8,7 +8,6 @@ public class NoteManager : MonoBehaviour
     public int bpm = 0;
     double currentTime = 0d;
 
-    private bool noteActive = true;
     [SerializeField] Transform tfNoteAppear = null;
 
     TimingManager theTimingManager;
@@ -22,7 +21,7 @@ public class NoteManager : MonoBehaviour
     }
     private void Update()
     {
-        if (noteActive)
+        if (GameManager.instance.isStartGame)
         {
             currentTime += Time.deltaTime;
 
@@ -35,7 +34,7 @@ public class NoteManager : MonoBehaviour
                 currentTime -= 60d / bpm;
             }
         }
-        
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -57,11 +56,13 @@ public class NoteManager : MonoBehaviour
 
     public void RemoveNote()
     {
-        noteActive = false;
+        GameManager.instance.isStartGame = false;
         for (int i = 0; i < theTimingManager.boxNoteList.Count; i++)
         {
             theTimingManager.boxNoteList[i].SetActive(false);
             ObjectPool.instance.noteQueue.Enqueue(theTimingManager.boxNoteList[i]);
         }
+        
+        theTimingManager.boxNoteList.Clear();
     }
 }

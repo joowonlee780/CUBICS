@@ -18,6 +18,8 @@ public class TimingManager : MonoBehaviour
     StageManager theStageManager;
     PlayerController thePlayer;
     StatusManager theStatus;
+
+    AudioManager theAudioManager;
     
     
     void Start()
@@ -28,6 +30,8 @@ public class TimingManager : MonoBehaviour
         theStageManager = FindObjectOfType<StageManager>();
         thePlayer = FindObjectOfType<PlayerController>();
         theStatus = FindObjectOfType<StatusManager>();
+        theAudioManager = AudioManager.instance;
+        
         
         
         timingBoxs = new Vector2[timingRect.Length];
@@ -73,6 +77,8 @@ public class TimingManager : MonoBehaviour
                     {
                         theEffect.JudgementEffect(5);
                     }
+                    
+                    theAudioManager.PlaySFX("Clap");
                     return true;
                 }
             }
@@ -112,4 +118,12 @@ public class TimingManager : MonoBehaviour
         theStatus.ResetShieldCombo();
     }
     
+    public void Initialized()
+    {
+        for(int i= 0 ;i<judgementRecord.Length;i++)
+        {
+            judgementRecord[i] = 0;
+        }
+        
+    }
 }
