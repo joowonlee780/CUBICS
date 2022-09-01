@@ -17,6 +17,8 @@ public class TimingManager : MonoBehaviour
     ComboManager theComboManager;
     StageManager theStageManager;
     PlayerController thePlayer;
+    StatusManager theStatus;
+    
     
     void Start()
     {
@@ -25,6 +27,8 @@ public class TimingManager : MonoBehaviour
         theComboManager = FindObjectOfType<ComboManager>();
         theStageManager = FindObjectOfType<StageManager>();
         thePlayer = FindObjectOfType<PlayerController>();
+        theStatus = FindObjectOfType<StatusManager>();
+        
         
         timingBoxs = new Vector2[timingRect.Length];
         for (int i = 0; i < timingRect.Length; i++)
@@ -62,6 +66,7 @@ public class TimingManager : MonoBehaviour
                         theStageManager.ShowNextPlate();
                         theEffect.JudgementEffect(x);
                         judgementRecord[x]++;
+                        theStatus.CheckShield();
                     }
 
                     else
@@ -104,6 +109,7 @@ public class TimingManager : MonoBehaviour
     public void MissRecord()
     {
         judgementRecord[4]++;
+        theStatus.ResetShieldCombo();
     }
     
 }

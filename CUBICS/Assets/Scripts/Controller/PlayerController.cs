@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed = 3;
     Vector3 dir = new Vector3();
     public Vector3 destPos = new Vector3();
+    private Vector3 originPos = new Vector3();
 
     [SerializeField] float spinSpeed = 270;
     Vector3 rotDir = new Vector3();
@@ -24,19 +25,26 @@ public class PlayerController : MonoBehaviour
 
     TimingManager theTimingManager;
     CameraController theCam;
+    Rigidbody myRigid;
+    StatusManager theStatus;
 
     bool canMove = true;
+    bool isFalling = false;
     
     private void Start()
     {
+        theStatus = FindObjectOfType<StatusManager>();
         theTimingManager = FindObjectOfType<TimingManager>();
         theCam = FindObjectOfType<CameraController>();
+        myRigid = GetComponentInChildren<Rigidbody>();
+        originPos = transform.position;
     }
     void Update()
     {
+        CheckFalling();
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) ||Input.GetKeyDown(KeyCode.D) ||Input.GetKeyDown(KeyCode.W))
         {
-            if (canMove&&s_canPresskey)
+            if (canMove&&s_canPresskey&&!isFalling)
             {
                 Calc();
                 if (theTimingManager.CheckTiming())
@@ -46,6 +54,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    
 
     void Calc()
     {
@@ -104,6 +113,35 @@ public class PlayerController : MonoBehaviour
 
         realCube.localPosition = new Vector3(0, 0, 0);
     }
-
+    
+    private void CheckFalling()
+    {
+        if(!isFalling && canMove)
+        {
+            if (!Physics.Raycast(transform.position, Vector3.down, 1.1f))
+            {
+                Falling();
+            }
+        }
+    }
+    void Falling()
+    {
+        isFalling = true;
+        myRigid.useGravity = true;
+        myRigid.isKinematic = false;
+    }
+    public void ResetFalling()
+    {
+        theStatus.DecreaseHp(1);
+        if (!theStatus.IsDead())
+        {
+            isFalling = false;
+            myRigid.useGravity = false;
+            myRigid.isKinematic = true;
+        
+            transform.position = originPos;
+            realCube.localPosition = new Vector3(0, 0, 0);
+        }
+    }
     
 }
